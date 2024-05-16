@@ -24,6 +24,8 @@ func main() {
 	}
 }
 
+// okHeader := "HTTP/1.1 200 OK\r\nContent-Type: text/plain"
+
 func handleConn(conn net.Conn) {
 	defer conn.Close()
 	buffer := make([]byte, 1024)
@@ -42,9 +44,18 @@ func handleConn(conn net.Conn) {
 	fmt.Println(method, path, proto)
 	if path == "/" {
 		fmt.Fprint(conn, respOk)
+	} else if strings.HasPrefix(path, "/echo") {
+		echoResponse(conn, path)
 	} else {
 		fmt.Fprint(conn, respNotFound)
 	}
+}
+
+func echoResponse(conn net.Conn, path string) {
+	message := strings.Split(path, "/")[2]
+	fmt.Println(message)
+	resp := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(message), message)
+	fmt.Fprint(conn, resp)
 }
 
 func parseHeader(request string) (string, string, string) {
