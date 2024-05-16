@@ -31,4 +31,6 @@ func handleConn(conn net.Conn) {
 		return
 	}
 	fmt.Println(string(buffer))
+	resp := "HTTP/1.1 200 OK\r\n\r\n"
+	conn.Write([]byte(resp))
 }
