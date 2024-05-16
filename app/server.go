@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -24,13 +25,31 @@ func main() {
 }
 
 func handleConn(conn net.Conn) {
+	defer conn.Close()
 	buffer := make([]byte, 1024)
+
 	_, err := conn.Read(buffer)
 	if err != nil {
-		fmt.Println(err)
-		return
+		log.Fatal(err)
 	}
-	fmt.Println(string(buffer))
-	resp := "HTTP/1.1 200 OK\r\n\r\n"
-	conn.Write([]byte(resp))
+
+	request := string(buffer)
+	fmt.Println(request)
+
+	respOk := "HTTP/1.1 200 OK\r\n\r\n"
+	respNotFound := "HTTP/1.1 404 Not Found\r\n\r\n"
+	method, path, proto := parseHeader(request)
+	fmt.Println(method, path, proto)
+	if path == "/" {
+		fmt.Fprint(conn, respOk)
+	} else {
+		fmt.Fprint(conn, respNotFound)
+	}
+}
+
+func parseHeader(request string) (string, string, string) {
+	header1 := strings.Split(request, "\r\n")[0]
+	// fmt.Println("headers", header1)
+	firstHeaders := strings.Split(header1, " ")
+	return firstHeaders[0], firstHeaders[1], firstHeaders[2]
 }
