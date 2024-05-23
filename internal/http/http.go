@@ -38,7 +38,7 @@ type ResponseWriter struct {
 	Request    // used for headers
 }
 
-func (rw ResponseWriter) WriteHeader(key string, value string) {
+func (rw *ResponseWriter) WriteHeader(key string, value string) {
 	rw.Request.SetHeader(key, value)
 }
 
@@ -71,7 +71,7 @@ func prepareResponse(rw ResponseWriter, p []byte) ([]byte, error) {
 	// }
 	headerString := fmt.Sprintf("%s %d %s\r\n", rw.Proto, rw.statusCode, StatusString[rw.statusCode])
 	for key, val := range rw.Header {
-		headerString += fmt.Sprintf("%s=%s\r\n", key, val)
+		headerString += fmt.Sprintf("%s: %s\r\n", key, val)
 	}
 	headerString += "\r\n" // separator for the body
 	return append([]byte(headerString), p...), nil
