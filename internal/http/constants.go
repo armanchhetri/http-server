@@ -17,3 +17,11 @@ var StatusString map[Status]string = map[Status]string{
 	StatusInternalServerError: "Internal Server Error",
 	StatusCreated:             "Created",
 }
+
+type StandardHeader string
+
+const (
+	ContentEncodingHeader StandardHeader = "Content-Encoding"
+	ContentLengthHeader   StandardHeader = "Content-Length"
+	AcceptEncodingHeader  StandardHeader = "Accept-Encoding"
+)

@@ -54,14 +54,14 @@ func (rw ResponseWriter) Write(p []byte) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	// fmt.Println(string(p))
+	// fmt.Println(p)
 	// fmt.Println(string(resp))
-	cnt, err := rw.conn.Write(resp)
+	_, err = rw.conn.Write(resp)
 	if err != nil {
 		return 0, err
 	}
 
-	return cnt, nil
+	return len(p), nil
 }
 
 func (rw ResponseWriter) WriteString(d string) (int, error) {

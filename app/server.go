@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/codecrafters-io/http-server-starter-go/internal/encoder"
 	"github.com/codecrafters-io/http-server-starter-go/internal/http"
 	log "github.com/sirupsen/logrus"
 )
@@ -66,8 +67,27 @@ func (app MyApp) UserAgentHandler(rw http.ResponseWriter, r *http.Request) {
 }
 
 func (app MyApp) EchoHandler(rw http.ResponseWriter, r *http.Request) {
-	log.Info(r.Header)
+	contentEncoding, _ := r.Header[string(http.AcceptEncodingHeader)]
+	encoder := encoder.EncoderFactory(contentEncoding)
 	msg := r.PathParam["msg"]
+	if encoder != nil {
+		dataReader, err := encoder.Encode([]byte(msg))
+		if err != nil {
+			log.Errorf("Unable to encode data: %v", err)
+			rw.WriteStatus(http.StatusInternalServerError)
+			rw.Write([]byte{})
+		}
+		// fmt.Println(data)
+		// decoded, err := encoder.Decode(data)
+		// fmt.Println("Decoded data: ", decoded, err)
+		rw.SetHeader(string(http.ContentEncodingHeader), contentEncoding)
+		// fmt.Fprint(rw, )
+		// rw.Write(data)
+		// io.Copy(os.Stdout, dataReader)
+		io.Copy(rw, dataReader)
+		return
+	}
+
 	rw.Write([]byte(msg))
 }
 
