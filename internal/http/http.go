@@ -12,11 +12,12 @@ import (
 // type statusCode int
 
 type Request struct {
-	Method string
-	URL    *URL
-	Proto  string
-	Header Header
-	Body   io.Reader
+	Method    string
+	PathParam map[string]string
+	URL       *URL
+	Proto     string
+	Header    Header
+	Body      io.Reader
 }
 
 type Header map[string]string
@@ -29,7 +30,7 @@ func (r *Request) SetHeader(key string, value string) {
 }
 
 type Handler interface {
-	Handle(ResponseWriter, *Request)
+	ServeHTTP(ResponseWriter, *Request)
 }
 
 type ResponseWriter struct {
@@ -83,6 +84,7 @@ func ListenAndServe(address string, handler Handler) {
 		log.Errorf("Failed to listen at %s", address)
 		os.Exit(1)
 	}
+	log.Infof("Serving at: %s\n", address)
 
 	for {
 		conn, err := l.Accept()

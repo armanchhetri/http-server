@@ -34,7 +34,11 @@ func (s *server) serve() {
 	}
 	rw.WriteHeader("Content-Type", "text/plain")
 	// fmt.Println(req, rw)
-	s.handler.Handle(rw, req)
+	s.handler.ServeHTTP(rw, req)
+	err = s.conn.Close()
+	if err == nil {
+		log.Error("Handler Function should write something to the wire")
+	}
 }
 
 func parseRequest(r *bufio.Reader) (*Request, error) {
