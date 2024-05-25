@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"io"
+	"strings"
 )
 
 var SupportedEncoding = map[string]bool{
@@ -11,6 +12,7 @@ var SupportedEncoding = map[string]bool{
 }
 
 func EncoderFactory(encoding string) Encoder {
+	encoding = strings.TrimSpace(encoding)
 	supported, ok := SupportedEncoding[encoding]
 	if ok && supported {
 		switch encoding {

@@ -11,6 +11,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/codecrafters-io/http-server-starter-go/internal/encoder"
 	"github.com/codecrafters-io/http-server-starter-go/internal/http"
@@ -68,10 +69,20 @@ func (app MyApp) UserAgentHandler(rw http.ResponseWriter, r *http.Request) {
 
 func (app MyApp) EchoHandler(rw http.ResponseWriter, r *http.Request) {
 	contentEncoding, _ := r.Header[string(http.AcceptEncodingHeader)]
-	encoder := encoder.EncoderFactory(contentEncoding)
+	var encodingScheme string
+	var encoderInstance encoder.Encoder
+	for _, encoding := range strings.Split(contentEncoding, ",") {
+		encoderInstance = encoder.EncoderFactory(encoding)
+
+		if encoderInstance != nil {
+			encodingScheme = encoding
+			break
+		}
+	}
+
 	msg := r.PathParam["msg"]
-	if encoder != nil {
-		dataReader, err := encoder.Encode([]byte(msg))
+	if encoderInstance != nil {
+		dataReader, err := encoderInstance.Encode([]byte(msg))
 		if err != nil {
 			log.Errorf("Unable to encode data: %v", err)
 			rw.WriteStatus(http.StatusInternalServerError)
@@ -80,7 +91,7 @@ func (app MyApp) EchoHandler(rw http.ResponseWriter, r *http.Request) {
 		// fmt.Println(data)
 		// decoded, err := encoder.Decode(data)
 		// fmt.Println("Decoded data: ", decoded, err)
-		rw.SetHeader(string(http.ContentEncodingHeader), contentEncoding)
+		rw.SetHeader(string(http.ContentEncodingHeader), encodingScheme)
 		// fmt.Fprint(rw, )
 		// rw.Write(data)
 		// io.Copy(os.Stdout, dataReader)
