@@ -92,7 +92,6 @@ func ListenAndServe(address string, handler Handler) {
 			log.Fatalf("Error on Accepting connection %v\n", err)
 		}
 		serv := &server{conn, handler}
-		fmt.Printf("serving with %v\n", serv)
 		go serv.serve()
 	}
 }

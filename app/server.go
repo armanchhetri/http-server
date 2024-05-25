@@ -13,6 +13,7 @@ import (
 func main() {
 	var app MyApp
 	mux := http.NewMux()
+	mux.Register("/", app.Home)
 	mux.Register("/user-agent", app.UserAgentHandler)
 	mux.Register("/echo/<msg>", app.EchoHandler)
 
@@ -33,4 +34,8 @@ func (app MyApp) EchoHandler(rw http.ResponseWriter, r *http.Request) {
 
 	// fmt.Println("got: ", userAgent)
 	rw.Write([]byte(msg))
+}
+
+func (app MyApp) Home(rw http.ResponseWriter, r *http.Request) {
+	rw.Write([]byte("Hello There!"))
 }
