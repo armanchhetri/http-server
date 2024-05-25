@@ -64,6 +64,11 @@ func (rw ResponseWriter) Write(p []byte) (int, error) {
 	return cnt, nil
 }
 
+func (rw ResponseWriter) WriteString(d string) (int, error) {
+	data := []byte(d)
+	return rw.Write(data)
+}
+
 func prepareResponse(rw ResponseWriter, p []byte) ([]byte, error) {
 	// body, err := io.ReadAll(rw.Request.Body)
 	// if err != nil {
