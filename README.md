@@ -5,11 +5,11 @@
 This is a solution to 
 ["Build Your Own HTTP server" Challenge](https://app.codecrafters.io/courses/http-server/overview) on codecrafters.io.
 
-They have got fun challenges to practice programming and software engineering.
+They have fun challenges to practice programming and software engineering.
 
-As a solution to the HTTP server challenge, I tried to make a small version of net/http package of go standard library.
+As a solution to the HTTP server challenge, I tried to make a small version of the net/http package of the go standard library.
 
-Along the way I learned the following topics:
+Along the way, I learned the following topics:
 - HTTP protocol in depth
 - Go language features
    - Interfaces 
@@ -60,11 +60,11 @@ INFO[0000] Registering route /files/<filename>
 INFO[0000] Serving at: 0.0.0.0:4221    
 ```
 
-Server registers the routes and listens at `0.0.0.0:4221`
+The server registers the routes and listens at `0.0.0.0:4221`
 
-One of the most challenging part for me was to continue reading on the port with a fixed sized buffer when further data is expected. It is specially relevant for POST methods that may include a body of size `Content-Size` as specified in a the header. A fixed buffer may not be enough to accumulate the whole data. I used go routine to keep reading the data from the socket and appended to the buffer until there is no data left or the connection is closed.
+One of the most challenging parts for me was to continue reading on the port with a fixed-sized buffer when further data is expected. It is especially relevant for POST methods that may include a body of size `Content-Size` as specified in the header. A fixed buffer may not be enough to accumulate the whole data. I used go routine to keep reading the data from the socket and append to the buffer until there is no data left or the connection was closed.
 
-Another was a custom multiplexer for routes. Currently the app accepts non-consecutive path parameters. For example `/books/<id>`, `/countries/<id>/nepal/<state>` are accepted but not `/vehicles/<car>/<brand>`. I have used a word-based **Trie** for multiplexing alogrithm(character-based could have been more efficient🤔)
+Another was a custom multiplexer for routes. Currently, the app accepts non-consecutive path parameters. For example `/books/<id>`, `/countries/<id>/nepal/<state>` are accepted but not `/vehicles/<car>/<brand>`. I have used a word-based **Trie** for the multiplexing algorithm(character-based would have been more efficient🤔)
 
 
 
